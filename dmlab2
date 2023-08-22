@@ -1,0 +1,46 @@
+1)
+SELECT V.VENDOR_NAME, COUNT(I.H_NO) AS INSTALLATION_COUNT
+FROM VENDOR V, INSTALL I
+WHERE V.TIN_NO = I.TIN_NO AND I.TYPE = 'DOMESTIC'
+GROUP BY V.VENDOR_NAME
+ORDER BY INSTALLATION_COUNT DESC
+LIMIT 1;
+ 
+ 
+ 2). List the place name with the highest capacity panel installed:*
+ 
+sql
+SELECT U.USER_ADDRESS, P.PV_TYPE, P.CAPACITY
+FROM PANEL P, INSTALL I, USER U
+WHERE P.PV_NO = I.PV_NO AND I.H_NO = U.H_NO
+ORDER BY P.CAPACITY DESC
+LIMIT 1;
+
+3)Display the area where monocrystalline panels are installed:*
+
+sql
+SELECT U.USER_ADDRESS
+FROM PANEL P, INSTALL I, USER U
+WHERE P.PV_NO = I.PV_NO AND I.H_NO = U.H_NO AND P.PV_TYPE = 'Monocrystalline';
+
+4) For the specific area, display the total installation charges for both types of PV modules:*
+
+sql
+SELECT U.USER_ADDRESS, SUM(I.COST) AS TOTAL_COST
+FROM INSTALL I, USER U
+WHERE I.H_NO = U.H_NO
+GROUP BY U.USER_ADDRESS;
+
+5) List the details of distributors and panels that are the oldest installations:*
+
+sql
+SELECT V.VENDOR_NAME, P.PV_TYPE, I.INSTALL_DATE
+FROM VENDOR V, SOLD_BY S, PANEL P, INSTALL I
+WHERE V.TIN_NO = S.TIN_NO AND S.PV_NO = P.PV_NO AND P.PV_NO = I.PV_NO
+  AND I.INSTALL_DATE = (SELECT MIN(INSTALL_DATE) FROM INSTALL)
+ORDER BY I.INSTALL_DATE;
+
+6)Find the average sales of both types of panels in only commercial places:*
+
+ SELECT P.PV_TYPE ,AVG(I.COST) AS AVG_COST FROM INSTALL I ,PANEL P WHERE I.PV_NO=P.PV_NO AND TYPE ="COMMERCIAL" GROUP BY PV_TYPE;
+
